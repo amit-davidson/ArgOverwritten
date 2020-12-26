@@ -27,7 +27,7 @@ package testdata
 
 func body(a int) {
 	_ = func() {
-		a = 5 // want `"a" overwrites func parameter "a"`
+		a = 5
 	}
 }
 
