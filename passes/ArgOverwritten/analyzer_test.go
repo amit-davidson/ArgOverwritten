@@ -18,6 +18,7 @@ func TestAnalyzer(t *testing.T) {
 		{name: "AssigningParamToAVariableFirst"},
 		{name: "MultipleParamsOfSameType"},
 		{name: "ShadowingVariable"},
+		{name: "EmptyBodyFunction"},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
