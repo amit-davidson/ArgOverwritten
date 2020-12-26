@@ -16,6 +16,14 @@ const (
 	doc = "ArgOverwritten finds function arguments being overwritten"
 )
 
+func report(pass *analysis.Pass, ident *ast.Ident) {
+	message := fmt.Sprintf("\"%s\" overwrites func parameter", ident.Name)
+	pass.Report(analysis.Diagnostic{
+		Pos:     ident.Pos(),
+		Message: message,
+	})
+}
+
 func run(pass *analysis.Pass) (interface{}, error) {
 	visitor := func(node ast.Node) bool {
 		var typ *ast.FuncType
@@ -39,18 +47,18 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			for _, arg := range field.Names {
 				obj := pass.TypesInfo.ObjectOf(arg)
 				ast.Inspect(body, func(node ast.Node) bool {
-					assign, ok := node.(*ast.AssignStmt)
-					if !ok {
-						return true
-					}
-					for _, lhs := range assign.Lhs {
-						ident, ok := lhs.(*ast.Ident)
+					switch stmt := node.(type) {
+					case *ast.AssignStmt:
+						for _, lhs := range stmt.Lhs {
+							ident, ok := lhs.(*ast.Ident)
+							if ok && pass.TypesInfo.ObjectOf(ident) == obj {
+								report(pass, ident)
+							}
+						}
+					case *ast.IncDecStmt:
+						ident, ok := stmt.X.(*ast.Ident)
 						if ok && pass.TypesInfo.ObjectOf(ident) == obj {
-							message := fmt.Sprintf("\"%s\" overwrites func parameter", ident.Name)
-							pass.Report(analysis.Diagnostic{
-								Pos:     ident.Pos(),
-								Message: message,
-							})
+							report(pass, ident)
 						}
 					}
 					return true

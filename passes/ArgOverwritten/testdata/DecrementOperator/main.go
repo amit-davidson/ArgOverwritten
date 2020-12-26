@@ -6,7 +6,7 @@ func retry(fn func() error, retries int) error {
 			if retries < 1 {
 				return err
 			}
-			retries--
+			retries-- // want `"retries" overwrites func parameter`
 			continue
 		}
 		return nil
