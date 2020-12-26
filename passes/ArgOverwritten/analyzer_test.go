@@ -12,13 +12,14 @@ func TestAnalyzer(t *testing.T) {
 		name     string
 		testPath string
 	}{
-		{name: "Simple"},
+		{name: "SimpleOverwriting"},
 		{name: "AnonymousFunction"},
 		{name: "OverwritingParamFromOuterScope"},
 		{name: "AssigningParamToAVariableFirst"},
 		{name: "MultipleParamsOfSameType"},
 		{name: "ShadowingVariable"},
 		{name: "EmptyBodyFunction"},
+		{name: "NoWarnings"},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
