@@ -20,6 +20,7 @@ func TestAnalyzer(t *testing.T) {
 		{name: "ShadowingVariable"},
 		{name: "EmptyBodyFunction"},
 		{name: "NoWarnings"},
+		{name: "DecrementOperator"},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
