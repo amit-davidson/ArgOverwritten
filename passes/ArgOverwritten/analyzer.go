@@ -45,11 +45,8 @@ func run(pass *analysis.Pass) (interface{}, error) {
 					}
 					for _, lhs := range assign.Lhs {
 						ident, ok := lhs.(*ast.Ident)
-						if !ok {
-							continue
-						}
-						if pass.TypesInfo.ObjectOf(ident) == obj {
-							message := fmt.Sprintf("\"%s\" overwrites func parameter \"%s\"", ident.Name, obj.Name())
+						if ok && pass.TypesInfo.ObjectOf(ident) == obj {
+							message := fmt.Sprintf("\"%s\" overwrites func parameter", ident.Name)
 							pass.Report(analysis.Diagnostic{
 								Pos:     ident.Pos(),
 								Message: message,
