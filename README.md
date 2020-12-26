@@ -22,7 +22,19 @@ go vet -vettool=$(which argoverwritten) ${path_to_file}
 ```
 
 ## Example:
+```
+package testdata
 
+func body(a int) {
+	_ = func() {
+		a = 5 // want `"a" overwrites func parameter "a"`
+	}
+}
+
+func main() {
+	body(5)
+}
+```
 ```
 go vet -vettool=$(which argoverwritten) /testdata/OverwritingParamFromOuterScope
 ```
