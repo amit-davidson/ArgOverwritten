@@ -10,7 +10,6 @@ import (
 func TestAnalyzer(t *testing.T) {
 	var testCases = []struct {
 		name     string
-		testPath string
 	}{
 		{name: "SimpleOverwriting"},
 		{name: "AnonymousFunction"},
