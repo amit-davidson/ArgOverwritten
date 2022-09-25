@@ -8,13 +8,10 @@ import (
 
 var Analyzer = &analysis.Analyzer{
 	Name: "ArgOverwritten",
-	Doc:  doc,
+	Doc:  "ArgOverwritten finds function arguments being overwritten",
 	Run:  run,
 }
 
-const (
-	doc = "ArgOverwritten finds function arguments being overwritten"
-)
 
 func report(pass *analysis.Pass, ident *ast.Ident) {
 	message := fmt.Sprintf("\"%s\" overwrites func parameter", ident.Name)
