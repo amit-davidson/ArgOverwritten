@@ -3,6 +3,7 @@ package ArgOverwritten
 import (
 	"fmt"
 	"go/ast"
+	"go/types"
 	"golang.org/x/tools/go/analysis"
 )
 
@@ -11,7 +12,6 @@ var Analyzer = &analysis.Analyzer{
 	Doc:  "ArgOverwritten finds function arguments being overwritten",
 	Run:  run,
 }
-
 
 func report(pass *analysis.Pass, ident *ast.Ident) {
 	message := fmt.Sprintf("\"%s\" overwrites func parameter", ident.Name)
@@ -40,28 +40,35 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			return true
 		}
 
+		args := map[types.Object]struct{}{}
 		for _, field := range typ.Params.List {
 			for _, arg := range field.Names {
-				obj := pass.TypesInfo.ObjectOf(arg)
-				ast.Inspect(body, func(node ast.Node) bool {
-					switch stmt := node.(type) {
-					case *ast.AssignStmt:
-						for _, lhs := range stmt.Lhs {
-							ident, ok := lhs.(*ast.Ident)
-							if ok && pass.TypesInfo.ObjectOf(ident) == obj {
-								report(pass, ident)
-							}
-						}
-					case *ast.IncDecStmt:
-						ident, ok := stmt.X.(*ast.Ident)
-						if ok && pass.TypesInfo.ObjectOf(ident) == obj {
+				args[pass.TypesInfo.ObjectOf(arg)] = struct{}{}
+			}
+		}
+
+		ast.Inspect(body, func(node ast.Node) bool {
+			switch stmt := node.(type) {
+			case *ast.AssignStmt:
+				for _, lhs := range stmt.Lhs {
+					ident, ok := lhs.(*ast.Ident)
+					if ok {
+						if _, isArgInLHS := args[pass.TypesInfo.ObjectOf(ident)]; isArgInLHS {
 							report(pass, ident)
 						}
 					}
-					return true
-				})
+				}
+			case *ast.IncDecStmt:
+				ident, ok := stmt.X.(*ast.Ident)
+				if ok {
+					if _, isArgInLHS := args[pass.TypesInfo.ObjectOf(ident)]; isArgInLHS {
+						report(pass, ident)
+					}
+				}
 			}
-		}
+			return true
+		})
+
 		return true
 	}
 	for _, f := range pass.Files {
