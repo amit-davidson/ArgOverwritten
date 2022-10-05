@@ -5,7 +5,8 @@
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-ArgOverwritten finds function arguments being overwritten
+ArgOverwritten finds function arguments being overwritten.
+Check out my [blog post](https://link.medium.com/g2gOIMCmPtb) on writing the analyzer! 
 
 ## Quick Start:
 
